@@ -5,6 +5,7 @@ import (
 	"AdventOfCode/Day2"
 	"AdventOfCode/Day3"
 	"AdventOfCode/Day4"
+	"AdventOfCode/Day5"
 	"flag"
 	"fmt"
 	"strconv"
@@ -31,6 +32,10 @@ func main() {
 		part1 := Day4.Part1()
 		part2 := Day4.Part2()
 		fmt.Println(formatResult(adventDay, part1, part2))
+	case 5:
+		part1 := Day5.Part1("input.txt")
+		part2 := Day5.Part2("input.txt")
+		fmt.Println(formatStringResult(adventDay, part1, part2))
 	default:
 		fmt.Println("Please Provide a Day")
 	}
@@ -44,5 +49,14 @@ func formatResult(day int, part1 int, part2 int) string {
 		strconv.Itoa(day),
 		strconv.Itoa(part1),
 		strconv.Itoa(part2),
+	)
+}
+
+func formatStringResult(day int, part1 string, part2 string) string {
+	return fmt.Sprintf(
+		"Day %s:\n    Part 1: %s\n    Part 2: %s",
+		strconv.Itoa(day),
+		part1,
+		part2,
 	)
 }

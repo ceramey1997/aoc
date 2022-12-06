@@ -8,8 +8,9 @@ import (
 	"strconv"
 )
 
+
 func CreateScanner(fileName string, day int) *bufio.Scanner {
-	filePath := getFullPath(fileName, day)
+	filePath := GetFullPath(fileName, day)
 	file, err := os.Open(filePath)
 	if err != nil {
 		fmt.Print(err)
@@ -17,7 +18,7 @@ func CreateScanner(fileName string, day int) *bufio.Scanner {
 	return bufio.NewScanner(file)
 }
 
-func getFullPath(fileName string, day int) string {
+func GetFullPath(fileName string, day int) string {
 	path, err := filepath.Abs(".")
 	if (err != nil) {
 		fmt.Println(err)

@@ -11,7 +11,7 @@
             "mode": "debug",
             "program": "./main.go",
             "args": [
-                "--day", "1"
+                "--day", "5"
             ]
         }
     ]
