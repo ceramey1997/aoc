@@ -8,6 +8,7 @@ import (
 	"AdventOfCode/Day5"
 	"AdventOfCode/Day6"
 	"AdventOfCode/Day7"
+	"AdventOfCode/Day8"
 	"flag"
 	"fmt"
 	"strconv"
@@ -45,6 +46,9 @@ func main() {
 	case 7:
 		part1 := Day7.Part1("input.txt")
 		part2 := Day7.Part2("input.txt")
+		fmt.Println(formatResult(adventDay, part1, part2))
+	case 8:
+		part1, part2 := Day8.Parts("input.txt")
 		fmt.Println(formatResult(adventDay, part1, part2))
 	default:
 		fmt.Println("Please Provide a Day")
