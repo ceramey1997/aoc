@@ -2,6 +2,7 @@ package Day9
 
 import (
 	"errors"
+	"math"
 	"strconv"
 )
 
@@ -58,66 +59,51 @@ func (direction Day9Instruction) Execute(startCoordHead Coordinate, startCoordTa
 	var visitedHead []Coordinate 
 	var visitedTail []Coordinate
 	for i:=0; i<direction.moveUnits; i++ {
-		headCord, tailCord := executeSingleMove(currentCordHead, currentCordTail, direction)
+		headCord := direction.executeSingleMove(currentCordHead)
 		visitedHead = append(visitedHead, headCord)
 		currentCordHead = headCord
-		currentCordTail = tailCord
+
+		tailCord := direction.follow(currentCordHead, currentCordTail)
 		visitedTail = append(visitedTail, tailCord)
+		currentCordTail = tailCord
 	}
 	return visitedHead, visitedTail
 }
 
-func executeSingleMove(startCordHead Coordinate, startCordTail Coordinate,  dir Day9Instruction) (Coordinate, Coordinate) {
+func (dir Day9Instruction) follow(headCurrentCord Coordinate, tailCurrentCord Coordinate) Coordinate {
+	dX := headCurrentCord.X - tailCurrentCord.X
+	dY := headCurrentCord.Y - tailCurrentCord.Y
+	hypot := math.Sqrt(
+		(float64(dX) * float64(dX)) +
+		(float64(dY) * float64(dY)))
+	if (hypot > 2) {
+		tailCurrentCord.X += sign(dX)
+		tailCurrentCord.Y += sign(dY)
+	} else if (math.Abs(float64(dX)) == 2) {
+		tailCurrentCord.X += sign(dX)
+	} else if (math.Abs(float64(dY)) == 2) {
+		tailCurrentCord.Y += sign(dY)
+	}
+	return tailCurrentCord
+}
+
+func sign(x int) int {
+	if (x > 0) {
+		return 1
+	}
+	return -1
+}
+
+func (dir Day9Instruction) executeSingleMove(startCordHead Coordinate) Coordinate {
 	switch dir.direction {
 	case RIGHT:
 		startCordHead.X++
-		if (startCordTail.X == startCordHead.X - 2) {
-			if (startCordTail.Y != startCordHead.Y) {
-				startCordTail.Y = startCordHead.Y
-			}
-			startCordTail.X++
-		}
 	case LEFT:
 		startCordHead.X--
-		if (startCordTail.X == startCordHead.X + 2) {
-			if (startCordTail.Y != startCordHead.Y) {
-				startCordTail.Y = startCordHead.Y
-			}
-			startCordTail.X--
-		}
 	case UP:
 		startCordHead.Y++
-		if (startCordTail.Y == startCordHead.Y - 2) {
-			if (startCordTail.X != startCordHead.X) {
-				startCordTail.X = startCordHead.X
-			}
-			startCordTail.Y++
-		}
 	case DOWN:
 		startCordHead.Y--
-		if (startCordTail.Y == startCordHead.Y + 2) {
-			if (startCordTail.X != startCordHead.X) {
-				startCordTail.X = startCordHead.X
-			}
-			startCordHead.Y--
-		}
 	}
-	return startCordHead, startCordTail
-}
-
-
-
-func (direction Day9Instruction) Execute2(startCoordHead Coordinate, startCoordTail Coordinate) ([]Coordinate, []Coordinate) {
-	currentCordHead := startCoordHead
-	currentCordTail := startCoordTail
-	var visitedHead []Coordinate 
-	var visitedTail []Coordinate
-	for i:=0; i<direction.moveUnits; i++ {
-		headCord, tailCord := executeSingleMove(currentCordHead, currentCordTail, direction)
-		visitedHead = append(visitedHead, headCord)
-		currentCordHead = headCord
-		currentCordTail = tailCord
-		visitedTail = append(visitedTail, tailCord)
-	}
-	return visitedHead, visitedTail
+	return startCordHead
 }

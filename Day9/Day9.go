@@ -14,7 +14,6 @@ func Part1(fileName string) int {
 	visitedHead = append(visitedHead, mostRecentCordHead) 
 	lines := Utils.GetLines(fileName, 9)
 	directions := parseDirections(lines)
-	fmt.Println(directions)
 	for _, d := range directions {
 		moreCordsHead, moreCordsTail := d.Execute(mostRecentCordHead, mostRecentCordTail)
 		
