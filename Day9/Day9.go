@@ -3,6 +3,7 @@ package Day9
 import (
 	"AdventOfCode/Utils"
 	"fmt"
+	"math"
 	"strings"
 )
 
@@ -59,5 +60,63 @@ func removeDuplicates(cords []Coordinate) []Coordinate {
 	return ret
 }
 func Part2(fileName string) int {
-	return 0
+	moves := map[Direction9]int{UP: 1, DOWN: -1, RIGHT: 1, LEFT: -1}
+	knots := make(map[int][]Coordinate)
+	for i:=0; i<10; i++ {
+		knots[i] = []Coordinate{{X:0, Y:0}}
+	}
+	lines := Utils.GetLines(fileName, 9)
+	directions := parseDirections(lines)
+	for _, d := range directions {
+		for i:=0; i<d.moveUnits; i++ {
+			h := knots[0][len(knots[0])-1]
+			hx := h.X
+			hy := h.Y
+			if (d.direction == RIGHT || d.direction == LEFT) {
+				hx += moves[d.direction]
+			} else if (d.direction == UP || d.direction == DOWN) {
+				hy += moves[d.direction]
+			}
+			knots[0] = append(knots[0], Coordinate{X:hx, Y:hy})
+			for k:=1; k<10; k++ {
+				th := knots[k][len(knots[k])-1]
+				t := knots[k-1][len(knots[k-1])-1]
+				tCord := part2Calculation(float64(t.X), float64(t.Y), float64(th.X), float64(th.Y))
+				knots[k] = append(knots[k], tCord)
+			}
+		}
+	}
+	k9 := removeDuplicates(knots[9])
+	return len(k9)
+}
+
+func part2Calculation(p1x float64, p1y float64, p2x float64, p2y float64) Coordinate {
+	distance := math.Abs(p1x - p2x) + math.Abs(p1y - p2y)
+	if (p1x == p2x && distance >= 2) {
+		if (p1y > p2y) {
+			return Coordinate{X: int(p2x), Y: int(p1y - 1)}
+		}
+		return Coordinate{X: int(p2x), Y: int(p1y + 1)}
+	}
+	if (p1y == p2y && distance >= 2) {
+		if (p1x > p2x) {
+			return Coordinate{X: int(p1x - 1), Y: int(p2y)}
+		}
+		return Coordinate{X: int(p1x + 1), Y: int(p2y)}
+	}
+	if (distance > 2) {
+		if (p1x > p2x) {
+			if (p1y > p2y) {
+				return Coordinate{X: int(p2x + 1), Y: int(p2y + 1)}
+			}
+			return Coordinate{X: int(p2x + 1), Y: int(p2y - 1)}
+		}
+		if (p1x < p2x) {
+			if (p1y > p2y) {
+				return Coordinate{X: int(p2x - 1), Y: int(p2y + 1)}
+			}
+			return Coordinate{X: int(p2x - 1), Y: int(p2y - 1)}
+		}
+	}
+	return Coordinate{X: int(p2x), Y: int(p2y)}
 }

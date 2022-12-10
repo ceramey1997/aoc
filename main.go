@@ -53,7 +53,7 @@ func main() {
 		fmt.Println(formatResult(adventDay, part1, part2))
 	case 9:
 		part1 := Day9.Part1("input.txt")
-		part2 := Day9.Part2("testinput.txt")
+		part2 := Day9.Part2("input.txt")
 		fmt.Println(formatResult(adventDay, part1, part2))
 	default:
 		fmt.Println("Please Provide a Day")
