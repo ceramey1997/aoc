@@ -3,6 +3,7 @@ package main
 import (
 	"AdventOfCode/Day1"
 	"AdventOfCode/Day10"
+	"AdventOfCode/Day11"
 	"AdventOfCode/Day2"
 	"AdventOfCode/Day3"
 	"AdventOfCode/Day4"
@@ -60,6 +61,10 @@ func main() {
 		part1 := Day10.Part1("input.txt")
 		part2 := Day10.Part2("input.txt")
 		fmt.Println(formatIntAndString(adventDay, part1, part2))
+	case 11:
+		part1 := Day11.Part1("input.txt")
+		part2 := Day11.Part2("input.txt")
+		fmt.Println(formatResult(adventDay, part1, part2))
 	default:
 		fmt.Println("Please Provide a Day")
 	}
