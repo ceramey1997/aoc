@@ -44,18 +44,18 @@ class Schematic:
             col_num += 1
 
     def nums_around(self, row_number : int, col_number : int) -> list[int]:
-        l = self.nums_left(row_number, col_number)
-        r = self.nums_right(row_number, col_number)
-        a = self.nums_above(row_number, col_number)
-        b = self.nums_below(row_number, col_number)
+        left = self.nums_left(row_number, col_number-1)
+        right = self.nums_right(row_number, col_number+1)
+        above = self.nums_above(row_number, col_number)
+        below = self.nums_below(row_number, col_number)
         res = []
-        for i in l:
+        for i in left:
             res.append(i)
-        for j in r:
+        for j in right:
             res.append(j)
-        for k in a:
+        for k in above:
             res.append(k)
-        for l in b:
+        for l in below:
             res.append(l)
         if len(res) > 2:
             return []
@@ -64,6 +64,8 @@ class Schematic:
 
     def nums_above(self, row_number : int, col_number : int) -> list[int]:
         row = row_number - 1
+        if row < 0:
+            return []
         my_int = ""
 
         try:
@@ -88,6 +90,8 @@ class Schematic:
 
     def nums_below(self, row_number : int, col_number : int) -> list[int]:
         row = row_number + 1
+        if row >= len(self._rows):
+            return []
         my_int = ""
         try:
             is_an_int = self.is_int(self._rows[row][col_number])
@@ -117,6 +121,8 @@ class Schematic:
                     break
                 my_int += is_an_int
                 col_number -= 1
+                if col_number < 0:
+                    break
             except Exception:
                 break
         if my_int != "":
@@ -132,6 +138,8 @@ class Schematic:
                     break
                 my_int += is_an_int
                 col_number += 1 
+                if col_number >= len(self._rows[row_number]):
+                    break
             except Exception:
                 break
         if my_int != "":
@@ -169,41 +177,6 @@ class Schematic:
                 break
         return int(num)
 
-
-    def has_star_around(self, row_number: int, col_num_start: int, col_num_end: int, is_top: bool, is_bottom: bool, is_beginning: bool, is_end: bool) -> bool:
-        if not is_beginning:
-            if self._rows[row_number][col_num_start - 1] == '*':
-                return True
-        if not is_end:
-            if self._rows[row_number][col_num_end + 1] == '*':
-                return True
-        if not is_top:
-            j = col_num_start
-            if not is_beginning:
-                j = col_num_start - 1
-            while j <= col_num_end + 1:
-                if j == col_num_start and is_beginning:
-                    j += 1
-                    continue
-                if j > col_num_end and is_end:
-                    j += 1
-                    continue
-                if self._rows[row_number - 1][j] == '*':
-                    return True
-                j += 1
-        if not is_bottom:
-            k = col_num_start
-            if not is_beginning:
-                k = col_num_start - 1
-            while k <= col_num_end + 1:
-                if k > col_num_end and is_end:
-                    k += 1
-                    continue
-                if self._rows[row_number + 1][k] == '*':
-                    return True
-                k += 1
-        return False
-
 class ItDoesThings:
     def __str__(self):
         return str(self._schematic) 
@@ -225,5 +198,5 @@ class ItDoesThings:
 
 
 
-final = ItDoesThings('example2.txt')
+final = ItDoesThings('input2.txt')
 print(final)
