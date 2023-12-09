@@ -1,4 +1,3 @@
-
 class Schematic:
     def __str__(self):
         gg = ""
@@ -31,27 +30,28 @@ class Schematic:
         is_bottom = False
         if row_above < 0:
             is_top = True
-        if row_below >= len(self._rows):
+        if row_below >= len(self._rows)-1:
             is_bottom = True 
 
-        is_beginning = False
-        is_end = False
         col_number = 0
-        while col_number < len(self._rows[row_number]):
+        while col_number <= len(self._rows[row_number]):
+            is_beginning = False
+            is_end = False
             start = col_number
-            has_ints = False
+            my_int = "" 
             while True:
                 try:
                     is_an_int = self.is_int(self._rows[row_number][col_number])
                     if not is_an_int:
                         break
-                    has_ints = True
+                    my_int += self._rows[row_number][col_number]
                     col_number += 1
                 except Exception:
                     break
 
-            if not has_ints:
+            if my_int == "":
                 col_number += 1
+                my_int = ""
                 continue
 
             if start == 0:
@@ -61,14 +61,14 @@ class Schematic:
                 is_end = True
 
             # -1 for end cause col_number has been ++'d
-            if self.has_symbol_around(row_number, start, col_number - 1, is_top, is_bottom, is_beginning, is_end):
+            if self.has_symbol_around(row_number, start, col_number-1, is_top, is_bottom, is_beginning, is_end):
                 part_number = ""
                 j = start
                 while j < col_number:
-                    #print(self._rows[row_number][j], end="")
                     part_number += self._rows[row_number][j]
                     j += 1
                 self._part_numbers.append(int(part_number))
+                print(part_number)
                 part_number = ""
             col_number += 1
 
@@ -94,7 +94,7 @@ class Schematic:
                 if j == col_num_start and is_beginning:
                     j += 1
                     continue
-                if j >= col_num_end and is_end:
+                if j > col_num_end and is_end:
                     j += 1
                     continue
                 if self._rows[row_number - 1][j] != '.' and not self.is_int(self._rows[row_number - 1][j]):
@@ -105,10 +105,7 @@ class Schematic:
             if not is_beginning:
                 k = col_num_start - 1
             while k <= col_num_end + 1:
-                if k == col_num_start and is_beginning:
-                    k += 1
-                    continue
-                if k >= col_num_end and is_end:
+                if k > col_num_end and is_end:
                     k += 1
                     continue
                 if self._rows[row_number + 1][k] != '.' and not self.is_int(self._rows[row_number + 1][k]):
@@ -141,19 +138,3 @@ class ItDoesThings:
 
 final = ItDoesThings('input1.txt')
 print(final)
-
-
-#    def has_symbol_adjacent(self, row_num: int, col_num: int) -> None:
-#        return
-#
-#    def has_symbol_left(self, row_num: int, col_num: int) -> bool:
-#        return False
-#
-#    def has_symbol_right(self, row_num: int, col_num: int) -> bool:
-#        return False
-#
-#    def has_symbol_top(self, row_num: int, col_num: int) -> bool:
-#        return False
-#
-#    def has_symbol_bottom(self, row_num: int, col_num: int) -> bool:
-#        return False
