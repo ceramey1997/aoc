@@ -86,171 +86,44 @@ class Hand:
         else:
             raise Exception(f"unknown card given {str_card}")
 
-    def determine_type2(self):
-        pass
-
     def determine_type(self):
-        card_value : dict[str, int] = {i:self.hand.count(i) for i in self.hand}
+        # remove JOKERS replace with best possible card
         enum_card_value : dict[Card, int] = {i:self.enum_hand.count(i) for i in self.enum_hand}
-        counts = card_value.values()
         count_jokers : int = len([c for c in self.enum_hand if c == Card.JOKER]) 
-        if count_jokers == 5:
+        highValue = 0
+        highCard = Card.JOKER
+        if count_jokers > 0:
+            for card, count in enum_card_value.items():
+                if card != Card.JOKER:
+                    if count > highValue:
+                        highCard = card
+                        highValue = count
+                    elif count == highValue and card.value > highCard.value:
+                        highCard = card
+            if highCard != Card.JOKER:
+                enum_card_value[highCard] += enum_card_value[Card.JOKER]
+                enum_card_value.pop(Card.JOKER)
+
+        counts = enum_card_value.values()
+
+        if 5 in counts:
             self.hand_type = Combination.FIVE_KIND
-        elif count_jokers == 4:
-            self.hand_type = Combination.FIVE_KIND
-        elif count_jokers == 3:
-            t = self.determine_one_two_from3(enum_card_value)
-            if t != None:
-                self.hand_type = t
-
-        elif count_jokers == 2:
-            t = self.determine_one_two_three_from2(enum_card_value)
-            if t != None:
-                self.hand_type = t
-
-        elif count_jokers == 1:
-            t = self.determine_one_two_three_from1(enum_card_value)
-            if t != None:
-                self.hand_type = t
-
-        if self.hand_type == None:
-            if 5 in counts:
-                self.hand_type = Combination.FIVE_KIND
-            elif 4 in counts:
-                self.hand_type = Combination.FOUR_KIND
-            elif 3 in counts:
-                if 2 in counts:
-                    self.hand_type = Combination.FULL_HOUSE
-                else:
-                    self.hand_type = Combination.THREE_KIND
-            elif 2 in counts:
-                pairs = [card for card, count in card_value.items() if count == 2]
-                if len(pairs) == 2:
-                    self.hand_type = Combination.TWO_PAIRS
-                else:
-                    self.hand_type = Combination.PAIR
-            else:
-                self.hand_type = Combination.HIGH_CARD
-
-    def determine_one_two_three_from2(self, enum_card_value : dict[Card, int]) -> Combination | None:
-        #try:
-        #    three_card_type =list(enum_card_value.keys())[list(enum_card_value.values()).index(3)]
-        #    if three_card_type == Card.JOKER:
-        #        has_three = Flase
-        #except:
-        #    has_three = False
-        try:
-            two_card_type = list(enum_card_value.keys())[list(enum_card_value.values()).index(2)]
-            if two_card_type == Card.JOKER:
-                has_two = False
-            else:
-                has_two = True
-        except:
-            has_two = False
-        if has_two:
-            return Combination.FOUR_KIND
-        #------------------------------------------
-
-        try:
-            list(enum_card_value.keys())[list(enum_card_value.values()).index(3)]
-            has_three = True
-        except:
-            has_three = False
-        if has_three:
-            return Combination.FIVE_KIND
-            #return Combination.FULL_HOUSE
-        #------------------------------------------
-
-        try:
-            list(enum_card_value.keys())[list(enum_card_value.values()).index(1)]
-            has_one = True
-        except:
-            has_one = False
-        if has_one:
-            return Combination.THREE_KIND
-        #------------------------------------------
-
-        return None
-
-    def determine_one_two_three_from1(self, enum_card_value : dict[Card, int]) -> Combination | None:
-        try:
-            list(enum_card_value.keys())[list(enum_card_value.values()).index(4)]
-            has_four = True
-        except:
-            has_four = False
-        if has_four:
-            return Combination.FIVE_KIND
-        #------------------------------------------
-
-        try:
-            list(enum_card_value.keys())[list(enum_card_value.values()).index(3)]
-            has_three = True
-        except:
-            has_three = False
-        if has_three:
-            return Combination.FOUR_KIND
-        #------------------------------------------
-
-        twos = []
-        has_two = False
-        has_two_twos = False
-        for k, v in enum_card_value.items():
-            if v == 2:
-                twos.append(k)
-        if len(twos) >= 1:
-            has_two = True
-        if len(twos) == 2:
-            print(twos)
-            has_two_twos = True
-        if has_two:
-            if has_two_twos:
-                return Combination.FULL_HOUSE
-            return Combination.THREE_KIND
-        #------------------------------------------
-
-#         try:
-#             list(enum_card_value.keys())[list(enum_card_value.values()).index(3)]
-#             has_three = True
-#         except:
-#             has_three = False
-#         if has_three:
-#             return Combination.FOUR_KIND
-        #------------------------------------------
-
-        ones = []
-        for k, v in enum_card_value.items():
-            if v == 1:
-                ones.append(k)
-        if len(ones) == 1 and ones[0] == Card.JOKER:
-            has_one = False
-        elif len(ones) > 1:
-            has_one = True
-        else:
-            has_one = False
-        if has_one:
-            return Combination.PAIR
-        #------------------------------------------
-
-        return None
-
-
-    def determine_one_two_from3(self, enum_card_value : dict[Card, int]) -> Combination | None:
-        try:
-            list(enum_card_value.keys())[list(enum_card_value.values()).index(2)]
-            has_two = True
-        except:
-            has_two = False
-        if has_two:
-            self.hand_type = Combination.FIVE_KIND
-        #------------------------------------------
-
-        try:
-            list(enum_card_value.keys())[list(enum_card_value.values()).index(1)]
-            has_one = True
-        except:
-            has_one = False
-        if has_one:
+        elif 4 in counts:
             self.hand_type = Combination.FOUR_KIND
+        elif 3 in counts:
+            if 2 in counts:
+                self.hand_type = Combination.FULL_HOUSE
+            else:
+                self.hand_type = Combination.THREE_KIND
+        elif 2 in counts:
+            pairs = [card for card, count in enum_card_value.items() if count == 2]
+            if len(pairs) == 2:
+                self.hand_type = Combination.TWO_PAIRS
+            else:
+                self.hand_type = Combination.PAIR
+        else:
+            self.hand_type = Combination.HIGH_CARD
+
 
     def set_rank(self, rank : int) -> None:
         self.rank = rank
@@ -315,5 +188,5 @@ class ItDoesThings:
             return 0
 
 
-final = ItDoesThings("exm.txt")
+final = ItDoesThings("input2.txt")
 print(final)
