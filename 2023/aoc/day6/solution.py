@@ -1,3 +1,7 @@
+from aoc.utils.day import Day
+
+day = Day(6, "Wait For It")
+
 class Outcome:
     def __str__(self):
         return f"Button Time: {self.button_time} -- Distance: {self.distance}"
@@ -63,6 +67,10 @@ class ItDoesThings:
         for t, d in zip(times, distances):
             race = Race(t, d)
             self.races.append(race)
+        total = 1
+        for r in self.races:
+            total *= len(r.winning_outcomes)
+        self.error_margin = total
 
     def part2(self):
         self.part = 2
@@ -74,8 +82,15 @@ class ItDoesThings:
         distance = int("".join(list(distance.split(":")[1].strip().split())))
 
         self.race = Race(time, distance, True)
+        self.part2_answer = len(self.race.winning_outcomes)
 
 
-final = ItDoesThings('input2.txt')
-final.part2()
-print(final)
+def part_one():
+    final = ItDoesThings('aoc/day6/input1.txt')
+    final.part1()
+    return final.error_margin
+
+def part_two():
+    final = ItDoesThings('aoc/day6/input2.txt')
+    final.part2()
+    return final.part2_answer

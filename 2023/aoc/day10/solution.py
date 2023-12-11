@@ -1,5 +1,8 @@
 from enum import Enum
 from collections import deque
+from aoc.utils.day import Day
+
+day = Day(10, "Pipe Maze")
 
 
 class P(Enum):
@@ -266,5 +269,12 @@ class DoingIt:
             return P.BEND90_SOUTH_EAST
         raise Exception("should have found S starting type")
 
-final = DoingIt("input2.txt")
-print(final)
+
+def part_one():
+    final = DoingIt("aoc/day10/input1.txt")
+    return final.furthest_point
+
+def part_two():
+    final = DoingIt("aoc/day10/input2.txt")
+    return final.enclosed
+
