@@ -1,0 +1,44 @@
+def find_path_old(self, galaxy: list[list[str]], start: Galaxy, target: Galaxy) -> tuple[Galaxy, Galaxy, int]:
+    seen: set[tuple[int, int, int]]  = {(start.position[0], start.position[1], 0)}
+    queue: deque[tuple[int, int, int]] = deque([(start.position[0], start.position[1], 0)])
+    if start.num == target.num:
+        return start, target, 0
+    while queue:
+        row, col, dist = queue.popleft()
+        current_space = galaxy[row][col]
+        if current_space == target.num:
+            return start, target, dist+1
+        if self._up_or_left_possible(row): # up
+            up_space = galaxy[row-1][col]
+            if up_space == target.num:
+                return start, target, dist + 1
+            seen.add((row-1, col))
+            queue.append((row-1, col, dist+1))
+        if self._down_or_right_possible(row, len(galaxy)-1): # down
+            down_space = galaxy[row+1][col]
+            if down_space == target.num:
+                return start, target, dist + 1
+            seen.add((row+1, col))
+            queue.append((row+1, col, dist+1))
+        if self._up_or_left_possible(col): # left
+            left_space = galaxy[row][col-1]
+            if left_space == target.num:
+                return start, target, dist + 1
+            seen.add((row, col-1))
+            queue.append((row, col-1, dist+1))
+        if self._down_or_right_possible(col, len(galaxy[0])-1): # right
+            right_space = galaxy[row][col+1]
+            if right_space == target.num:
+                return start, target, dist + 1
+            seen.add((row, col+1))
+            queue.append((row, col+1, dist+1))
+
+def _up_or_left_possible(self, i: int) -> bool:
+    if i == 0:
+        return False
+    return True
+
+def _down_or_right_possible(self, i: int, max: int) -> bool:
+    if i == max:
+        return False
+    return True

@@ -2,7 +2,7 @@ import click
 import os
 import time
 from tabulate import tabulate
-from concurrent.futures import ThreadPoolExecutor, Future, as_completed
+from concurrent.futures import ThreadPoolExecutor
 
 @click.command()
 @click.option("--day", "-d", required=False, help="day to execute")
@@ -11,9 +11,9 @@ def cli(day: int | None, part: int | None) -> None:
     mods = get_modules()
     if not day:
         modules = {d: __import__(mod, fromlist=["object"]) for d, mod in mods.items()}
-        res = {}
+        res: dict[int, list[any]] = {}
         with ThreadPoolExecutor() as exec:
-            results = [exec.submit(determine_execution, m, part, d) for d, m in modules.items()]
+            results = [exec.submit(determine_execution, m, part) for d, m in modules.items()]
             for i in results:
                 r = i.result()
                 res[r[0]] = r
@@ -26,7 +26,7 @@ def cli(day: int | None, part: int | None) -> None:
         module = __import__(mods[int(day)], fromlist=["object"])
         print_results([determine_execution(module, part)])
 
-def determine_execution(module, part: str | None, day: int | None = None):
+def determine_execution(module, part: str | None) -> list[any]:
     if part != None:
         part = int(part)
     if part == 1:
@@ -40,7 +40,7 @@ def determine_execution(module, part: str | None, day: int | None = None):
         res2, elapsed2 = execute(module.part_two)
         return [module.day.day, module.day.title, res1, elapsed1, res2, elapsed2]
 
-def execute(fn):
+def execute(fn: callable) -> tuple[any, int]:
     start = time.perf_counter()
     res = fn()
     finish = time.perf_counter()
@@ -52,7 +52,7 @@ def print_results(data):
 
 
 
-def get_modules():
-    days = [folder for folder in os.listdir("aoc") if folder.startswith("day")]
-    mods = {int(folder.replace("day", "")): f"aoc.{folder}.solution" for folder in days}
+def get_modules() -> dict[int,str]:
+    days: list[str] = [folder for folder in os.listdir("aoc") if folder.startswith("day")]
+    mods: dict[int,str] = {int(folder.replace("day", "")): f"aoc.{folder}.solution" for folder in days}
     return mods
